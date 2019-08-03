@@ -1,4 +1,4 @@
-package com.opendragonhuang.list;
+package com.opendragonhuang.list.implement;
 
 import com.opendragonhuang.list.implement.MyArrayList;
 import org.junit.Test;
