@@ -93,7 +93,7 @@ public class MyArrayList<T extends Comparable<T>> implements MyList<T>, Iterable
      * @return
      */
     @Override
-    public T priorElem(T curElem) {
+    public T preElem(T curElem) {
         for (int i = 0; i < length; i++) {
             if(value[i].compareTo(curElem) == 0){
                 if(i > 0){

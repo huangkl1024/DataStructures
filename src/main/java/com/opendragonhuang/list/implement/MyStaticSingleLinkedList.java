@@ -139,7 +139,7 @@ public class MyStaticSingleLinkedList<T extends Comparable<T>> implements MyList
      * @return
      */
     @Override
-    public T priorElem(T curElem) {
+    public T preElem(T curElem) {
         int p = head;
         while (memory[p].cur != 0){
             if(memory[memory[p].cur].value.compareTo(curElem) == 0){

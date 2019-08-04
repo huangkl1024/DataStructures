@@ -46,7 +46,7 @@ public interface MyList<T extends Comparable<T>> extends Cloneable, Iterable<T> 
      * @param curElem
      * @return
      */
-    T priorElem(T curElem);
+    T preElem(T curElem);
 
     /**
      * 返回与线性表中与数据元素 curElem 相等的数据元素的后继。

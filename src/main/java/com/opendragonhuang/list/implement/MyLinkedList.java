@@ -6,28 +6,25 @@ import com.opendragonhuang.list.exception.MyListIsEmptyException;
 import java.util.Iterator;
 
 /**
+ * 双向链表。
  * @author opendragonhuang
  * @version 1.0
- * @date 2019/8/3
+ * @date 2019/8/4
  */
-public class MySingleLinkedList<T extends Comparable<T>> implements MyList<T>, Iterable<T> {
+public class MyLinkedList<T extends Comparable<T>> implements MyList<T> {
     private class ListNode{
         T value;
         ListNode next;
-
-        public ListNode() {
-        }
-
-        public ListNode(T value, ListNode next) {
-            this.value = value;
-            this.next = next;
-        }
+        ListNode pre;
     }
+
     private ListNode head;
+    private ListNode tail;
     private int length;
 
-    public MySingleLinkedList() {
+    public MyLinkedList() {
         head = new ListNode();
+        tail = head;
     }
 
     /**
@@ -36,6 +33,7 @@ public class MySingleLinkedList<T extends Comparable<T>> implements MyList<T>, I
     @Override
     public void clear() {
         head.next = null;
+        tail = head;
         length = 0;
     }
 
@@ -82,19 +80,17 @@ public class MySingleLinkedList<T extends Comparable<T>> implements MyList<T>, I
      */
     @Override
     public int locateElem(T e) {
-
-        ListNode p = head;
-        int i = 0;
-        while (p.next != null){
-            p = p.next;
-            i++;
+        ListNode p = head.next;
+        int i = 1;
+        while (p != null){
             if(p.value.compareTo(e) == 0){
                 return i;
             }
-
+            p = p.next;
+            i++;
         }
 
-        return i;
+        return 0;
     }
 
     /**
@@ -105,19 +101,13 @@ public class MySingleLinkedList<T extends Comparable<T>> implements MyList<T>, I
      */
     @Override
     public T preElem(T curElem) {
-        ListNode p = head;
-        while (p.next != null){
-            if(p.next.value.compareTo(curElem) == 0){
-                if( p == head){
-                    return null;
-                }else{
-                    return p.value;
-                }
-            }
-            p = p.next;
-        }
+        int i = locateElem(curElem);
 
-        return null;
+        if(i == 1 || i == 0){
+            return null;
+        }else{
+            return _locateElem(curElem).pre.value;
+        }
     }
 
     /**
@@ -128,19 +118,13 @@ public class MySingleLinkedList<T extends Comparable<T>> implements MyList<T>, I
      */
     @Override
     public T nextElem(T curElem) {
-        ListNode p = head.next;
-        while (p != null){
-            if(p.value.compareTo(curElem) == 0){
-                if(p.next == null){
-                    return null;
-                }else{
-                    return p.next.value;
-                }
-            }
-            p = p.next;
-        }
+        int i = locateElem(curElem);
 
-        return null;
+        if(i == length || i == 0){
+            return null;
+        }else{
+            return _locateElem(curElem).next.value;
+        }
     }
 
     /**
@@ -154,12 +138,22 @@ public class MySingleLinkedList<T extends Comparable<T>> implements MyList<T>, I
         if(i < 1 || i > length+1){
             throw new IndexOutOfBoundsException("传入的索引超出了线性表的长度");
         }
-
         ListNode p = _getElem(i-1);
         ListNode node = new ListNode();
-        node.value =  e;
-        node.next = p.next;
-        p.next = node;
+        node.value = e;
+
+        if(i == length+1){
+            node.pre = p;
+            node.next = p.next;
+            p.next = node;
+            tail = node;
+        }else{
+            node.next = p.next;
+            node.pre = p;
+            p.next.pre = node;
+            p.next = node;
+        }
+
         length++;
     }
 
@@ -171,18 +165,21 @@ public class MySingleLinkedList<T extends Comparable<T>> implements MyList<T>, I
      */
     @Override
     public T delete(int i) throws MyListIsEmptyException {
-        if(empty()){
-            throw new IndexOutOfBoundsException("空表，无法删除");
-        }
+
         if(i < 1 || i > length){
             throw new IndexOutOfBoundsException("传入的索引超出了线性表的长度");
         }
 
-        ListNode p = _getElem(i-1);
-        T e = p.next.value;
-        p.next = p.next.next;
+        ListNode p = _getElem(i);
+        T e = p.value;
+        if(i == length){
+            p.pre.next = null;
+            tail = p.pre;
+        }else{
+            p.pre.next = p.next;
+            p.next.pre = p.pre;
+        }
         length--;
-
         return e;
     }
 
@@ -191,8 +188,8 @@ public class MySingleLinkedList<T extends Comparable<T>> implements MyList<T>, I
      */
     @Override
     public void traverse() {
-        for(T e : this){
-            System.out.print(e+"\t");
+        for(T t : this){
+            System.out.print(t+"\t");
         }
         System.out.println();
     }
@@ -204,38 +201,60 @@ public class MySingleLinkedList<T extends Comparable<T>> implements MyList<T>, I
      */
     @Override
     public MyList<T> clone() {
-        return null;
+        MyLinkedList<T> linkedList = null;
+        try {
+            linkedList = (MyLinkedList<T>) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return linkedList;
     }
 
-    /**
-     * 获取链表第 i 个位置的节点。
-     * @param i
-     * @return
-     */
+    @Override
+    public Iterator<T> iterator() {
+        return new MyLinkedListIterator();
+    }
+
     private ListNode _getElem(int i){
-        ListNode p = head;
-        int j = 0;
-        while (p != null && j < i){
-            p = p.next;
-            j++;
+        ListNode p = null;
+        if(i <= length/2){
+            p = head;
+            int j = 0;
+            while(j < i){
+                p = p.next;
+                j++;
+            }
+        }else{
+            p = tail;
+            int j = length;
+            while (j > i){
+                p = p.pre;
+                j--;
+            }
         }
 
         return p;
     }
 
-    @Override
-    public Iterator<T> iterator() {
-        return new MySingleLinkedListIterator();
+    private ListNode _locateElem(T e){
+        ListNode p = head.next;
+        while (p != null){
+            if(p.value.compareTo(e) == 0){
+                return p;
+            }
+            p = p.next;
+        }
+
+        return null;
     }
 
-    private class MySingleLinkedListIterator implements Iterator<T>{
+    private class MyLinkedListIterator implements Iterator<T>{
         ListNode p = head.next;
 
         @Override
         public boolean hasNext() {
             return p != null;
         }
-
 
         @Override
         public T next() {

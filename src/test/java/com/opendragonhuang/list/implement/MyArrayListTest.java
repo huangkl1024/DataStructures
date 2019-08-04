@@ -1,6 +1,5 @@
 package com.opendragonhuang.list.implement;
 
-import com.opendragonhuang.list.implement.MyArrayList;
 import org.junit.Test;
 
 public class MyArrayListTest {
@@ -44,9 +43,9 @@ public class MyArrayListTest {
         for (int i = 1; i < 20; i++) {
             myArrayList.insert(i, i);
         }
-        System.out.println("元素 12 的前驱为："+myArrayList.priorElem(12));
+        System.out.println("元素 12 的前驱为："+myArrayList.preElem(12));
         System.out.println("元素 12 的后继为："+myArrayList.nextElem(12));
-        System.out.println("元素 1 的前驱为："+myArrayList.priorElem(1));
+        System.out.println("元素 1 的前驱为："+myArrayList.preElem(1));
         System.out.println("元素 19 的后继为："+myArrayList.nextElem(19));
     }
 
