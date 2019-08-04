@@ -2,12 +2,14 @@ package com.opendragonhuang.list.adt;
 
 import com.opendragonhuang.list.exception.MyListIsEmptyException;
 
+import java.util.Iterator;
+
 /**
  * @author opendragonhuang
  * @version 1.0
  * @date 2019/8/3
  */
-public interface MyList<T extends Comparable<T>> extends Cloneable{
+public interface MyList<T extends Comparable<T>> extends Cloneable, Iterable<T> {
     /**
      * 清空线性表。
      */

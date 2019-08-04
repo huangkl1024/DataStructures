@@ -76,4 +76,27 @@ public class Lists {
 
         return list;
     }
+
+    /**
+     * 求 (list1 - list2)U(list2 - list1)
+     * @param list1
+     * @param list2
+     * @param <T>
+     * @return
+     */
+    public static <T extends Comparable<T>> MyList<T> difference(MyList<T> list1, MyList<T> list2){
+        MyList<T> list = list1.clone();
+
+        int i = 0;
+        for (T t : list2) {
+            i = list.locateElem(t);
+            if(i == 0){
+                list.insert(list.length()+1, t);
+            }else{
+                list.delete(i);
+            }
+        }
+
+        return list;
+    }
 }
