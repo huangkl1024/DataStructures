@@ -4,6 +4,7 @@ import com.opendragonhuang.list.adt.MyStack;
 import com.opendragonhuang.list.implement.MyLinkedStack;
 
 /**
+ * 使用堆栈实现迷宫路径寻找问题。
  * @author opendragonhuang
  * @version 1.0
  * @date 2019/8/9
@@ -21,7 +22,7 @@ public class Maze {
             this.dir = dir;
         }
     }
-    // 1 有墙 0 空旷 走过 2
+    // 1 有墙 0 空旷 2走过  3 走不通
     private int[][] maze;
     private Position start;
     private Position end;
@@ -41,10 +42,10 @@ public class Maze {
 
         do{
             if(isPass(curPos)){
-                foodPrint(curPos);
+                maze[curPos.getY()][curPos.getX()] = 2;
                 Point p = new Point(curStep, curPos, 1);
                 stack.push(p);
-                if(curPos.equals(start)){
+                if(curPos.equals(end)){
                     return true;
                 }
                 curPos = nextPos(curPos, 1);
@@ -53,7 +54,9 @@ public class Maze {
                 if(!stack.empty()){
                     Point p = stack.pop();
                     while (p.dir == 4 && !stack.empty()){
-                        stack.pop();
+                        maze[p.seat.getY()][p.seat.getX()] = 3;
+                        p = stack.pop();
+
                     }
                     if(p.dir < 4){
                         p.dir++;
@@ -76,41 +79,35 @@ public class Maze {
                 break;
             case 1:
             case 2:
+            case 3:
                 ret =  false;
                 break;
         }
         return ret;
     }
 
-    private void foodPrint(Position pos){
-        maze[pos.getY()][pos.getX()] = 2;
-    }
-
-
     private Position nextPos(Position pos, int dir){
         Position newPos = new Position();
 
         switch (dir){
             case 1:
-                newPos.setX(pos.getX());
-                newPos.setY(pos.getY()+1);
-                break;
-            case 2:
                 newPos.setX(pos.getX()+1);
                 newPos.setY(pos.getY());
                 break;
-            case 3:
+            case 2:
                 newPos.setX(pos.getX());
-                newPos.setY(pos.getY()-1);
+                newPos.setY(pos.getY()+1);
                 break;
-            case 4:
+            case 3:
                 newPos.setX(pos.getX()-1);
                 newPos.setY(pos.getY());
+                break;
+            case 4:
+                newPos.setX(pos.getX());
+                newPos.setY(pos.getY()-1);
                 break;
         }
 
         return newPos;
     }
-
-
 }
