@@ -1,5 +1,10 @@
 package com.opendragonhuang.list.example;
 
+import com.opendragonhuang.list.adt.MyList;
+import com.opendragonhuang.list.adt.MyStack;
+import com.opendragonhuang.list.implement.MyArrayList;
+import com.opendragonhuang.list.implement.MyArrayStack;
+import com.opendragonhuang.list.implement.MyLinkedList;
 import com.opendragonhuang.list.implement.MyLinkedStack;
 
 /**
@@ -69,6 +74,97 @@ public class Stacks {
             }
         }
 
+        return sb.toString();
+    }
+
+    /**
+     * 括号匹配。
+     * @param str
+     * @return
+     */
+    public static boolean bracketsMatching(String str){
+        MyStack<Character> stack = new MyArrayStack<>();
+        char[] cbuf = str.toCharArray();
+        for (char c : cbuf) {
+            if(c != '(' && c != ')' && c != '[' && c != ']'){
+                throw new IllegalArgumentException("传入的参数不合法！");
+            }
+        }
+
+        for (char c : cbuf) {
+            if(c == '(' || c == '['){
+                stack.push(c);
+            }
+
+            if(c == ')'){
+                if(stack.empty()){
+                    return false;
+                }else{
+                    if(stack.getTop() == '('){
+                        stack.pop();
+                    }else{
+                        return false;
+                    }
+                }
+            }
+
+            if(c == ']'){
+                if(stack.empty()){
+                    return false;
+                }else{
+                    if(stack.getTop() == '['){
+                        stack.pop();
+                    }else{
+                        return false;
+                    }
+                }
+            }
+        }
+
+        if(stack.empty()){
+            return true;
+        }else {
+            return false;
+        }
+
+    }
+
+    /**
+     * 行编辑程序。
+     * @param str
+     * @return
+     */
+    public static String lineEdit(String str){
+        MyStack<Character> stack = new MyArrayStack<>();
+        char[] cbuf = str.toCharArray();
+
+        for (char c : cbuf) {
+            switch (c){
+                case '#':
+                    stack.pop();
+                    break;
+                case '@':
+                    stack.clear();
+                    break;
+                default:
+                    stack.push(c);
+                    break;
+            }
+        }
+
+        // 逆序堆栈的数据元素
+        MyList<Character> list = new MyLinkedList<>();
+        while (!stack.empty()){
+            list.insert(1, stack.pop());
+        }
+
+        // list 转换成字符串
+        StringBuilder sb = new StringBuilder();
+        for (Character character : list) {
+            sb.append(character);
+        }
+
+        list.clear();
         return sb.toString();
     }
 }
